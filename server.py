@@ -1,19 +1,19 @@
 # chat_server.py
- 
 import sys
 import socket
 import select
+from user import User
 import pdb
 
 HOST = '' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 9009
+USER_LIST = []
 
 OPTIONS="The Commands list are : \n1.login\n2.list\n3.sendto\n4.help\n5.exit\n"
 
 def chat_server():
-    open("users.txt", 'w').close()
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind((HOST, PORT))
@@ -89,16 +89,9 @@ def unicast_reply(sock,message):
         # broken socket, remove it
 
 def get_socket_by_name(name):
-    sock_str = ""
-    f = open("users.txt","r")
-    lines = f.readlines()
-    f.close()
-    for line in lines:
-        if name == line.split("::")[0]:
-             sock_str = line.split("::")[1].strip("\n")
-    for sock in SOCKET_LIST:
-        if sock_str.strip('\n') == str(sock):
-            return sock
+    for obj in USER_LIST:
+        if obj.user_name == name:
+            return obj.socket
 
 def process_command(server_sock,data,sock):
     #pdb.set_trace()
@@ -123,24 +116,19 @@ def send_message(data,sender_sock):
         unicast_reply(sender_sock,"error in send to command please refer to help")
 
 def register_user(data,sock):
-    with open("users.txt", "a") as myfile:
-            myfile.write(data.split(" ")[1].strip("\n")+"::"+str(sock)+"\n")
-
+    user_obj = User(data.split(" ")[1].strip("\n"),sock)
+    USER_LIST.append(user_obj)
+    
 def deregister_user(data,sock):
-    f = open("users.txt","r")
-    lines = f.readlines()
-    f.close()
-    f = open("users.txt","w")
-    for line in lines:
-        if not (str(sock) in line):
-            f.write(line)
-    f.close()
+    for user in USER_LIST:
+        if user.socket == sock:
+            USER_LIST.remove(user.socket)
 
 def list_users(data):
-    f = open("users.txt","r")
-    users = f.read()
+    users = ""
+    for obj in USER_LIST:
+        users += obj.user_name +"\n" 
     return users
   
 if __name__ == "__main__":
-
     sys.exit(chat_server())
