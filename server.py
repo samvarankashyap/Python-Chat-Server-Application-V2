@@ -93,15 +93,23 @@ def get_socket_by_name(name):
         if obj.user_name == name:
             return obj.socket
 
+def is_user_exists(name):
+    for obj in USER_LIST:
+        if obj.user_name == name:
+            return True
+    return False
+
+
 def process_command(server_sock,data,sock):
     #pdb.set_trace()
     if "login" in data:
-        register_user(data,sock)
+        msg = register_user(data,sock)
+        unicast_reply(sock,msg)
     if "removeuser" in data:
         deregister_user(data,sock)
     if "list" in data:
-        users = list_users(data)
-        unicast_reply(sock,users)
+        msg = list_users(data)
+        unicast_reply(sock,msg)
     if "sendto" in data:
         send_message(data,sock)
     if "help" in data:
@@ -113,11 +121,15 @@ def send_message(data,sender_sock):
         reciver_sock = get_socket_by_name(data[1])
         unicast_reply(reciver_sock,data[2] )
     else:
-        unicast_reply(sender_sock,"error in send to command please refer to help")
+        unicast_reply(sender_sock,"error in send to command please refer to help\n")
 
 def register_user(data,sock):
-    user_obj = User(data.split(" ")[1].strip("\n"),sock)
-    USER_LIST.append(user_obj)
+    user_name = data.split(" ")[1].strip("\n")
+    if not is_user_exists(user_name):
+        user_obj = User(user_name, sock)
+        USER_LIST.append(user_obj)
+        return "User Added Successfully\n"
+    return "User Already exists please select another username\n"
     
 def deregister_user(data,sock):
     for user in USER_LIST:
