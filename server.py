@@ -54,7 +54,7 @@ def chat_server():
                             SOCKET_LIST.remove(sock)
 
                         # at this stage, no data means probably the connection has been broken
-                        broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr) 
+                        #broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
                         process_command(server_socket,"removeuser",sock)
 
                 # exception 
@@ -134,7 +134,7 @@ def register_user(data,sock):
 def deregister_user(data,sock):
     for user in USER_LIST:
         if user.socket == sock:
-            USER_LIST.remove(user.socket)
+            USER_LIST.remove(user)
 
 def list_users(data):
     users = ""
