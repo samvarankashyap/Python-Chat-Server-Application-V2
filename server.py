@@ -2,6 +2,7 @@
 import sys
 import socket
 import select
+import struct
 from user import User
 import pdb
 
@@ -131,6 +132,7 @@ def send_message(data,sender_sock):
 
 def register_user(data,sock):
     user_name = data.split(" ")[1].strip("\n")
+    user_name = struct.pack('20s',user_name)
     if not is_user_exists(user_name):
         user_obj = User(user_name, sock)
         USER_LIST.append(user_obj)
