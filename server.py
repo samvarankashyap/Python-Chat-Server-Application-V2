@@ -134,7 +134,7 @@ def register_user(data,sock):
     if not is_user_exists(user_name):
         user_obj = User(user_name, sock)
         USER_LIST.append(user_obj)
-        return "User Added Successfully\n"
+        return "User login Successfull please type 'help' for commands\n"
     return "User Already exists please select another username\n"
     
 def deregister_user(data,sock):
