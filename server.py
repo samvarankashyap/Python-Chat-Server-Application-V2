@@ -105,24 +105,27 @@ def is_user_exists(name):
             return True
     return False
 
+def validate_command(data):
+    return True
 
 def process_command(server_sock,data,sock):
     #pdb.set_trace()
-    if "login" in data:
-        msg = register_user(data,sock)
-        unicast_reply(sock,msg)
-    if "removeuser" in data:
-        deregister_user(data,sock)
-    if "list" in data:
-        msg = list_users(data)
-        unicast_reply(sock,msg)
-    if "sendto" in data:
-        send_message(data,sock)
-    if "logout" in data:
-        msg = deregister_user(data,sock)
-        unicast_reply(sock,msg)
-    if "help" in data:
-        unicast_reply(sock,OPTIONS)
+    if validate_command(data):
+        if "login" in data:
+            msg = register_user(data,sock)
+            unicast_reply(sock,msg)
+        if "removeuser" in data:
+            deregister_user(data,sock)
+        if "list" in data:
+            msg = list_users(data)
+            unicast_reply(sock,msg)
+        if "sendto" in data:
+            send_message(data,sock)
+        if "logout" in data:
+            msg = deregister_user(data,sock)
+            unicast_reply(sock,msg)
+        if "help" in data:
+            unicast_reply(sock,OPTIONS)
 
 def send_message(data,sender_sock):
     data = data.split(" ")
