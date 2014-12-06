@@ -117,11 +117,10 @@ def process_command(server_sock,data,sock):
 
 def send_message(data,sender_sock):
     data = data.split(" ")
-    if len(data)==3:
-        reciver_sock = get_socket_by_name(data[1])
-        unicast_reply(reciver_sock,data[2] )
-    else:
-        unicast_reply(sender_sock,"error in send to command please refer to help\n")
+    msg = data[2:]
+    msg = " ".join(msg)
+    reciver_sock = get_socket_by_name(data[1])
+    unicast_reply(reciver_sock,msg)
 
 def register_user(data,sock):
     user_name = data.split(" ")[1].strip("\n")
