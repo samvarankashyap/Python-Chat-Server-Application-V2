@@ -118,6 +118,9 @@ def process_command(server_sock,data,sock):
         unicast_reply(sock,msg)
     if "sendto" in data:
         send_message(data,sock)
+    if "logout" in data:
+        msg = deregister_user(data,sock)
+        unicast_reply(sock,msg)
     if "help" in data:
         unicast_reply(sock,OPTIONS)
 
@@ -143,6 +146,8 @@ def deregister_user(data,sock):
     for user in USER_LIST:
         if user.socket == sock:
             USER_LIST.remove(user)
+            return "logged out successfully\n"
+    return "please login before logout\n"
 
 def list_users(data):
     users = ""
