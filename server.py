@@ -93,6 +93,11 @@ def get_socket_by_name(name):
         if obj.user_name == name:
             return obj.socket
 
+def get_name_by_socket(socket):
+    for obj in USER_LIST:
+        if obj.socket == socket:
+            return obj.user_name
+
 def is_user_exists(name):
     for obj in USER_LIST:
         if obj.user_name == name:
@@ -119,6 +124,8 @@ def send_message(data,sender_sock):
     data = data.split(" ")
     msg = data[2:]
     msg = " ".join(msg)
+    sender_name = get_name_by_socket(sender_sock)
+    msg = sender_name+":"+msg 
     reciver_sock = get_socket_by_name(data[1])
     unicast_reply(reciver_sock,msg)
 
